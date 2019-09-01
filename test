@@ -1,0 +1,85 @@
+CREATE DATABASE IF NOT EXISTS staff;
+USE staff;
+
+CREATE TABLE IF NOT EXISTS employee (
+id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+first_name VARCHAR(30) NOT NULL,
+last_name VARCHAR(30) NOT NULL,
+salary INT UNSIGNED NOT NULL,
+UNIQUE (first_name,last_name)
+);
+
+CREATE TABLE IF NOT EXISTS position (
+id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+title VARCHAR(30) NOT NULL UNIQUE
+);
+
+INSERT employee (last_name,first_name,salary)
+VALUES
+('Андропов', 'Юрий', 50000),
+('Брежнев','Леонид', 45000),
+('Владимирский','Михаил',30000),
+('Ворошилов','Климент',	25000),
+('Горбачёв','Михаил',18000),
+('Громыко','Андрей',20000),
+('Калинин','Михаил',36000),
+('Каменев','Лев',60000),
+('Кузнецов','Василий',80000),
+('Ленин','Владимир',14000),
+('Микоян','Анастас',24000),
+('Подгорный','Николай',26000),
+('Свердлов','Яков',	98000),
+('Сталин','Иосиф',89000),
+('Хрущёв','Никита',	56000),
+('Черненко','Константин',10000),
+('Шверник','Николай',5000),
+('Ельцин','Борис',	15000),
+('Медведев','Дмитрий',23000),
+('Путин','Владимир',32000),
+('Абрамович','Роман',1000);
+
+INSERT position (title)
+VALUES
+('дворник'),
+('уборщица'),
+('водитель'),
+('завцехом'),
+('тимлид'),
+('программист'),
+('дизайнер'),
+('директор');
+
+#alter table employee add position_id int;
+UPDATE employee SET position_id=1 WHERE id IN (1,2,3);
+UPDATE employee SET position_id=2 WHERE id IN (4,5);
+UPDATE employee SET position_id=3 WHERE id IN (6,7,8);
+UPDATE employee SET position_id=4 WHERE id IN (9,10,11,12);
+UPDATE employee SET position_id=5 WHERE id IN (13,14,15);
+UPDATE employee SET position_id=6 WHERE id IN (16);
+UPDATE employee SET position_id=7 WHERE id IN (17,18,19,20);
+UPDATE employee SET position_id=8 WHERE id IN (21);
+
+CREATE TABLE IF NOT EXISTS chief_subordinate(
+chief INT UNSIGNED NOT NULL,
+subordinate INT UNSIGNED NOT NULL,
+PRIMARY KEY (chief,subordinate),
+FOREIGN KEY (chief) REFERENCES employee (id) 
+ON DELETE CASCADE,
+FOREIGN KEY (subordinate) REFERENCES employee (id) 
+ON DELETE CASCADE
+);
+
+INSERT chief_subordinate (chief,subordinate)
+VALUES
+(1,2),
+(1,3),
+(1,4),
+(1,5),
+(6,2),
+(7,2),
+(20,1);
+
+SELECT employee.id,employee.first_name,employee.last_name
+FROM employee WHERE id IN
+(SELECT subordinate FROM chief_subordinate 
+WHERE chief_subordinate.chief=1);
